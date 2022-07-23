@@ -1,12 +1,11 @@
 const express = require("express");
-const { default: mongoose } = require("mongoose");
 const app = express();
-const port = 6000;
+const port = 5060;
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json);
+app.use(express.json());
 
-const moogoose = require("mongoose");
+const mongoose = require("mongoose");
 const { User } = require("./models/User");
 
 mongoose
