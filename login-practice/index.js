@@ -10,6 +10,7 @@ app.use(cookieParser());
 
 const mongoose = require("mongoose");
 const { User } = require("./models/User");
+const { auth } = require("./middleware/auth");
 
 mongoose
   .connect(
@@ -22,7 +23,7 @@ app.get("/", (req, res) => {
   res.send("Hello World! ~~ 안녕하세요 ~~");
 });
 
-app.post("/register", (req, res) => {
+app.post("/api/users/register", (req, res) => {
   const user = new User(req.body);
   user.save((err, userInfo) => {
     if (err) return res.json({ success: false, err });
@@ -33,7 +34,7 @@ app.post("/register", (req, res) => {
   });
 });
 
-app.post("/login", (req, res) => {
+app.post("/api/users/login", (req, res) => {
   //요청 이메일 DB에서 찾기
   User.findOne({ email: req.body.email }, (err, user) => {
     if (!user) {
@@ -65,6 +66,20 @@ app.post("/login", (req, res) => {
         });
       });
     });
+  });
+});
+
+app.get("/api/users/auth", auth, (req, res) => {
+  // 여기까지 왔다는건 사용자 인증이 완료됐다는 거
+  res.status(200).json({
+    _id: req.user_id,
+    isAdmin: req.user.role === 0 ? false : true,
+    isAuth: true,
+    email: req.user.email,
+    name: req.user.name,
+    lastname: req.user.lastname,
+    role: req.user.role,
+    image: req.user.image,
   });
 });
 
